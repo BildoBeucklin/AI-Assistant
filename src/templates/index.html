@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4ee97;
+        }
+
+        #svg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #chat-container {
+            max-width: 70%;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        #chat-header {
+            background-color: #ffaa99;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-style: inherit;
+        }
+
+        #chat-messages {
+            padding: 15px;
+            overflow-y: scroll;
+        }
+
+        .message-container {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            align-self: flex-start;
+            max-width: 70%;
+            background-color: #656565;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .bot-message {
+            align-self: flex-end;
+            max-width: 70%;
+            background-color: #ff99aa;
+            color:#fff;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        #user-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #eee;
+        }
+
+        #user-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        #user-input button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #296EF5;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-header">AI Assistant</div>
+        <div id="chat-messages"></div>
+        <div id="user-input">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var inputField = document.getElementById('message-input');
+
+            inputField.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        function sendMessage() {
+            var userInput = document.getElementById('message-input').value;
+            if (userInput.trim() === '') return;
+
+            var chatMessages = document.getElementById('chat-messages');
+
+            // User message
+            var userMessageContainer = document.createElement('div');
+            userMessageContainer.className = 'message-container';
+            var userMessage = document.createElement('div');
+            userMessage.className = 'user-message';
+            userMessage.innerHTML = userInput;
+            userMessageContainer.appendChild(userMessage);
+            chatMessages.appendChild(userMessageContainer);
+            //addMessage('Warte kurz ich muss nach Informationen suchen.');
+            // Send user input to Flask server
+            fetch('/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'user_input=' + encodeURIComponent(userInput),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Serverantwort:', data);
+                console.log('Inhalt:', data[0].response);
+                console.log('Indicator:', data[1].responseIndicator);
+                addMessage(data[0].response);
+
+            })
+            .catch(error => console.error('Error:', error));
+            document.getElementById('message-input').value = '';
+        }
+
+
+            // Funktion zum Hinzufügen einer Nachricht in den Chat
+        function addMessage(content) {
+            var chatMessages = document.getElementById('chat-messages');
+            var messageContainer = document.createElement('div');
+            messageContainer.className = 'message-container';
+            var message = document.createElement('div');
+            message.className = 'bot-message';
+            message.innerHTML = content;
+            messageContainer.appendChild(message);
+            chatMessages.appendChild(messageContainer);
+        }
+        
+    </script>
+</body>
+</html>
