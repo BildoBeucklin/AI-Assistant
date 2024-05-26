@@ -36,10 +36,4 @@ The project depends on the following libraries and frameworks:
 - BeautifulSoup: For parsing HTML content.
 - SQLite: For storing and retrieving topic information.
 
-## Contributing
 
-Contributions to the AI Assistant project are welcome! If you have any suggestions, bug fixes, or new features to propose, please feel free to open an issue or submit a pull request. See the CONTRIBUTING.md file for guidelines on contributing to the project.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
