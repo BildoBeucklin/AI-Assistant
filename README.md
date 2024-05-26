@@ -37,3 +37,6 @@ The project depends on the following libraries and frameworks:
 - SQLite: For storing and retrieving topic information.
 
 
+## Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz lizenziert. 
